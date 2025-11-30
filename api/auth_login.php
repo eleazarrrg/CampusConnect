@@ -1,21 +1,25 @@
 <?php
 require __DIR__.'/../util.php'; require __DIR__.'/../db.php'; check_session_timeout(); ensure_csrf();
 $in=json_decode(file_get_contents('php://input'),true)?:[]; $email=trim($in['email']??''); $password=$in['password']??''; $remember=!empty($in['remember']);
-if(!$email||!$password) json_response(400,['error'=>'Correo y contraseña son requeridos']);
+if(!$email||!$password) json_response(400,['error'=>'Correo y contrasena son requeridos']);
 $pdo=pdo();
-/* rate limit básico por IP: máx 15 en 1 min */
+/* rate limit basico por IP: max 15 en 1 min */
 $lim=$pdo->prepare("SELECT COUNT(*) c FROM login_audit WHERE ip=? AND created_at> (NOW()-INTERVAL 1 MINUTE)"); $lim->execute([user_ip()]); if((int)$lim->fetch()['c']>15) json_response(429,['error'=>'Demasiados intentos, intenta en un minuto']);
 $stmt=$pdo->prepare("SELECT * FROM users WHERE email=?"); $stmt->execute([$email]); $u=$stmt->fetch();
 $now = new DateTimeImmutable();
 if ($u && $u['locked_until'] && new DateTimeImmutable($u['locked_until']) > $now){ json_response(423,['error'=>'Cuenta bloqueada temporalmente']); }
-if (!$u || !password_verify($password, $u['password_hash']) || $u['status']!=='active'){
+if (!$u || !password_verify($password, $u['password_hash'])){
   if ($u){
-    $att=(int)$u['attempts']+1;
+    $att=(int)$u['attempts']+1; $remaining = max(0,3-$att);
     if ($att>=3){ $lock=$now->modify('+30 minutes')->format('Y-m-d H:i:s'); $pdo->prepare("UPDATE users SET attempts=0, locked_until=? WHERE id=?")->execute([$lock,$u['id']]); }
     else { $pdo->prepare("UPDATE users SET attempts=? WHERE id=?")->execute([$att,$u['id']]); }
     $pdo->prepare("INSERT INTO login_audit(user_id,email,ip,success) VALUES (?,?,?,0)")->execute([$u['id'],$email,user_ip()]);
+    json_response(401,['error'=>"Credenciales invalidas. Intentos restantes: {$remaining}. Usa recuperar cuenta si olvidaste la clave."]);
   }
-  json_response(401,['error'=>'Credenciales inválidas o cuenta no activa']);
+  json_response(401,['error'=>'Credenciales invalidas o cuenta no activa']);
+}
+if ($u['status']!=='active'){
+  json_response(403,['error'=>'Cuenta no verificada','canResend'=>true,'userId'=>$u['id']]);
 }
 $pdo->prepare("UPDATE users SET attempts=0, locked_until=NULL WHERE id=?")->execute([$u['id']]);
 $_SESSION['uid']=(int)$u['id']; $_SESSION['last']=time(); if(!isset($_SESSION['csrf'])) $_SESSION['csrf']=bin2hex(random_bytes(16));

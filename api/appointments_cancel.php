@@ -2,7 +2,8 @@
 $in=json_decode(file_get_contents('php://input'),true)?:[]; $id=(int)($in['id']??0); $uid=current_user_id();
 $pdo=pdo(); $stmt=$pdo->prepare("SELECT * FROM appointments WHERE id=? AND user_id=?"); $stmt->execute([$id,$uid]); $a=$stmt->fetch();
 if(!$a) json_response(404,['error'=>'No existe']);
-if(!is_at_least_24h($a['date'], $a['time'])) json_response(422,['error'=>'No es posible cancelar con <24h']);
+$lessThan24 = !is_at_least_24h($a['date'], $a['time']);
+if($lessThan24) { json_response(422,['error'=>'No se libera para otros si faltan <24h; contacte soporte']); }
 $pdo->beginTransaction();
 $pdo->prepare("UPDATE appointments SET status='cancelada' WHERE id=?")->execute([$id]);
 $pdo->prepare("INSERT INTO appointment_history(appointment_id,user_id,old_date,old_time,action) VALUES (?,?,?,?, 'cancel')")->execute([$id,$uid,$a['date'],$a['time']]);

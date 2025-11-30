@@ -8,7 +8,7 @@ foreach($books as $bid){
   if(!$bk || $bk['status']!=='Disponible') json_response(422,['error'=>'Libro no disponible']);
 }
 foreach($books as $bid){
-  $pdo->prepare("INSERT INTO loans(user_id,book_id,days,status,request_date) VALUES (?,?,?,'activo',NOW())")->execute([$uid,$bid,$days]);
+  $pdo->prepare("INSERT INTO loans(user_id,book_id,days,status,request_date) VALUES (?,?,?,'proceso',NOW())")->execute([$uid,$bid,$days]);
   $pdo->prepare("UPDATE books SET status='No disponible' WHERE id=?")->execute([$bid]);
   $lid = (int)pdo()->lastInsertId();
   pdo()->prepare("INSERT INTO loans_history(loan_id,user_id,action,meta) VALUES (?,?, 'create', JSON_OBJECT('days',?))")->execute([$lid,$uid,$days]);

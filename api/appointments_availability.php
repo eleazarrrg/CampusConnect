@@ -6,6 +6,7 @@ $taken = array_column($stmt->fetchAll(), 'time');
 $uid = current_user_id() ?? 0;
 $out = array_map(function($h) use($taken,$date,$uid){
   $srv = $h . ':00';
-  return ['time'=>$h,'time_label'=>to_user_time_label($date,$srv,$uid),'available'=>!in_array($srv,$taken)];
+  $available = !in_array($srv,$taken,true) && is_at_least_24h($date,$srv);
+  return ['time'=>$h,'time_label'=>to_user_time_label($date,$srv,$uid),'available'=>$available];
 }, $hours);
 json_response(200,$out);

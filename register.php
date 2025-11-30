@@ -4,12 +4,12 @@
   <div class="card">
     <div class="row">
       <input placeholder="Nombre completo" data-test="full-name" id="fullName">
-      <input placeholder="Cédula" data-test="id-card" id="idCard">
+      <input placeholder="Cedula" data-test="id-card" id="idCard">
       <input placeholder="Correo" data-test="email" id="email">
-      <input placeholder="Teléfono (opcional)" id="phone">
-      <input type="password" placeholder="Contraseña" data-test="password" id="password">
+      <input placeholder="Telefono (opcional)" id="phone">
+      <input type="password" placeholder="Contrasena" data-test="password" id="password">
       <input type="password" placeholder="Confirmar" data-test="confirm-password" id="confirm">
-      <label class="row"><input type="checkbox" id="tos" data-test="tos"> Acepto términos y políticas</label>
+      <label class="row"><input type="checkbox" id="tos" data-test="tos"> Acepto terminos y politicas</label>
       <div class="row">
         <span class="badge" id="captchaQ"></span>
         <input placeholder="Respuesta" id="captchaA" data-test="captcha">
@@ -36,7 +36,7 @@ let csrf = '';
 async function loadCSRF(){ const r=await fetch(`${API}/csrf.php`,{credentials:'include'}); csrf=(await r.json()).token; }
 function makeCaptcha(){ const a=Math.floor(Math.random()*9)+1,b=Math.floor(Math.random()*9)+1; window.captchaAns=a+b; captchaQ.textContent=`CAPTCHA: ${a} + ${b} = ?`; }
 function pwdScore(s){ let n=0; if(s.length>=8) n++; if(/[A-Z]/.test(s)) n++; if(/[a-z]/.test(s)) n++; if(/\d/.test(s)) n++; return n; }
-password.oninput=()=>{ const n=pwdScore(password.value); pwdMeter.value=n; pwdHint.textContent = ['Muy débil','Débil','Aceptable','Fuerte','Muy fuerte'][n]; };
+password.oninput=()=>{ const n=pwdScore(password.value); pwdMeter.value=n; pwdHint.textContent = ['Muy debil','Debil','Aceptable','Fuerte','Muy fuerte'][n]; };
 makeCaptcha(); loadCSRF();
 
 function validateForm(){
@@ -44,13 +44,13 @@ function validateForm(){
   const errors=[];
   if(!tos.checked) errors.push('Debe aceptar TOS');
   const p1=password.value, p2=confirm.value;
-  if(p1!==p2){ errors.push('Las contraseñas no coinciden'); password.classList.add('error'); confirm.classList.add('error'); }
-  if(pwdScore(p1)<3) { errors.push('La contraseña es débil'); password.classList.add('error'); }
-  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.value.trim())){ errors.push('Correo inválido'); email.classList.add('error'); }
+  if(p1!==p2){ errors.push('Las contrasenas no coinciden'); password.classList.add('error'); confirm.classList.add('error'); }
+  if(pwdScore(p1)<3) { errors.push('La contrasena es debil'); password.classList.add('error'); }
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.value.trim())){ errors.push('Correo invalido'); email.classList.add('error'); }
   if(Number(captchaA.value)!==window.captchaAns){ errors.push('CAPTCHA incorrecto'); }
   if(!fullName.value.trim()) { errors.push('Nombre es obligatorio'); fullName.classList.add('error'); }
-  if(!idCard.value.trim()) { errors.push('Cédula es obligatoria'); idCard.classList.add('error'); }
-  if(errors.length){ err.textContent = errors.join(' • '); return false; }
+  if(!idCard.value.trim()) { errors.push('Cedula es obligatoria'); idCard.classList.add('error'); }
+  if(errors.length){ err.textContent = errors.join(' | '); return false; }
   return true;
 }
 
@@ -62,16 +62,16 @@ btnRegister.onclick=async()=>{
     const j=await r.json();
     if(!r.ok){ err.textContent=j.error||'Error'; return; }
     verifyBox.style.display='block'; tokenOut.textContent=j.verificationToken||''; ok.textContent='Registro creado. Revisa el OTP.';
-  }catch(e){ err.textContent='Error de conexión'; }
+  }catch(e){ err.textContent='Error de conexion'; }
 };
 
 btnVerify.onclick=async()=>{
   try{
     const r=await fetch(`${API}/auth_verify.php`,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF':csrf},credentials:'include',body:JSON.stringify({token:otp.value.trim()})});
     const j=await r.json().catch(()=>({}));
-    if(!r.ok){ err.textContent=j.error||'Token inválido'; return; }
+    if(!r.ok){ err.textContent=j.error||'Token invalido'; return; }
     location.href='<?= dynamic_base() ?>/login.php';
-  }catch(e){ err.textContent='Error de conexión'; }
+  }catch(e){ err.textContent='Error de conexion'; }
 };
 </script>
 <?php require __DIR__.'/layout_bottom.php'; ?>
