@@ -13,7 +13,7 @@ if (!isset($_SESSION['csrf'])) $_SESSION['csrf'] = bin2hex(random_bytes(16));
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title><?= htmlspecialchars($cfg['app_name']) ?></title>
-    <link rel="stylesheet" href="<?= $base ?>/style.css?v=5">
+    <link rel="stylesheet" href="<?= $base ?>/assets/css/style.css?v=6">
   </head>
   <body>
     <header>

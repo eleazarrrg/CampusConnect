@@ -1,11 +1,12 @@
 <?php
 declare(strict_types=1);
-if (session_status() === PHP_SESSION_NONE) session_start();
 require_once __DIR__ . '/db.php';
 
 function start_secure_session(): void {
+  static $started=false;
+  if ($started) return;
   $secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
-  if (PHP_VERSION_ID >= 70300) {
+  if (PHP_VERSION_ID >= 70300 && session_status() === PHP_SESSION_NONE) {
     session_set_cookie_params([
       'lifetime' => 0,
       'path' => '/',
@@ -14,7 +15,11 @@ function start_secure_session(): void {
       'samesite' => 'Lax'
     ]);
   }
+  if (session_status() === PHP_SESSION_NONE) session_start();
+  $started=true;
 }
+
+start_secure_session();
 
 function set_security_headers(): void {
   header("X-Frame-Options: SAMEORIGIN");
