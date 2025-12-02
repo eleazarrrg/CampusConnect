@@ -1,4 +1,4 @@
-<?php require __DIR__.'/../../layout_top.php'; ?>
+﻿<?php require __DIR__.'/../../layout_top.php'; ?>
 <h2>Crear cuenta</h2>
 <div class="grid">
   <div class="card">
@@ -45,7 +45,7 @@ function validateForm(){
   if(!tos.checked) errors.push('Debe aceptar TOS');
   const p1=password.value, p2=confirm.value;
   if(p1!==p2){ errors.push('Las contrasenas no coinciden'); password.classList.add('error'); confirm.classList.add('error'); }
-  if(pwdScore(p1)<3) { errors.push('La contrasena es debil'); password.classList.add('error'); }
+  if(pwdScore(p1)<3) { errors.push('La contrasena es debil: minimo 8 caracteres con mayuscula, minuscula y numero'); password.classList.add('error'); }
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.value.trim())){ errors.push('Correo invalido'); email.classList.add('error'); }
   if(Number(captchaA.value)!==window.captchaAns){ errors.push('CAPTCHA incorrecto'); }
   if(!fullName.value.trim()) { errors.push('Nombre es obligatorio'); fullName.classList.add('error'); }
@@ -75,3 +75,4 @@ btnVerify.onclick=async()=>{
 };
 </script>
 <?php require __DIR__.'/../../layout_bottom.php'; ?>
+

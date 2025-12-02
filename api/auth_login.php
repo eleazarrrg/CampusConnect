@@ -1,5 +1,5 @@
-<?php
-require __DIR__.'/../util.php'; require __DIR__.'/../db.php'; check_session_timeout(); ensure_csrf();
+﻿<?php
+require_once __DIR__.'/../util.php'; require_once __DIR__.'/../db.php'; check_session_timeout(); ensure_csrf();
 $in=json_decode(file_get_contents('php://input'),true)?:[]; $email=trim($in['email']??''); $password=$in['password']??''; $remember=!empty($in['remember']);
 if(!$email||!$password) json_response(400,['error'=>'Correo y contrasena son requeridos']);
 $pdo=pdo();
@@ -27,3 +27,6 @@ audit('auth.login',['uid'=>$u['id']]); $pdo->prepare("INSERT INTO login_audit(us
 $opts=['httponly'=>true,'samesite'=>'Lax','path'=>'/']; if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS']!=='off') $opts['secure']=true; if ($remember) $opts['expires']=time()+60*60*24*30;
 setcookie('sid', session_id(), $opts);
 json_response(200,['message'=>'Login ok']);
+
+
+

@@ -1,1 +1,2 @@
-<?php require __DIR__.'/views/posts/list.php'; ?>
+﻿<?php require __DIR__.'/views/posts/list.php'; ?>
+

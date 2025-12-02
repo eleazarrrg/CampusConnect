@@ -1,1 +1,2 @@
-<?php require __DIR__.'/views/auth/register.php'; ?>
+﻿<?php require __DIR__.'/views/auth/register.php'; ?>
+

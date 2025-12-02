@@ -1,20 +1,33 @@
-<?php
-require __DIR__.'/../util.php'; require __DIR__.'/../db.php'; check_session_timeout(); ensure_csrf();
+﻿<?php
+require_once __DIR__ . '/../util.php'; require_once __DIR__ . '/../db.php'; check_session_timeout(); ensure_csrf();
+
 $in = json_decode(file_get_contents('php://input'), true) ?: [];
-$full = trim($in['fullName'] ?? ''); $idc = trim($in['idCard'] ?? ''); $email = trim($in['email'] ?? ''); $phone = trim($in['phone'] ?? ''); $pass=$in['password'] ?? '';
-$missing=[]; if(!$full) $missing[]='Nombre es obligatorio'; if(!$idc) $missing[]='Cedula es obligatoria'; if(!$email) $missing[]='Correo es obligatorio'; if(!$pass) $missing[]='Contrasena es obligatoria';
-if ($missing) json_response(400,['error'=>implode(' | ',$missing)]);
-if (!filter_var($email, FILTER_VALIDATE_EMAIL)) json_response(422,['error'=>'Correo invalido']);
-if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/',$pass)) json_response(422,['error'=>'Contrasena debil']);
-$pdo=pdo();
-$ex=$pdo->prepare("SELECT id_card FROM users WHERE id_card=?"); $ex->execute([$idc]); if($ex->fetch()) json_response(409,['error'=>'Cedula ya registrada']);
-$ex2=$pdo->prepare("SELECT email FROM users WHERE email=?"); $ex2->execute([$email]); if($ex2->fetch()) json_response(409,['error'=>'Correo ya registrado']);
+$full = trim($in['fullName'] ?? ''); $idc = trim($in['idCard'] ?? ''); $email = trim($in['email'] ?? ''); $phone = trim($in['phone'] ?? ''); $pass = $in['password'] ?? '';
+$missing = [];
+if (!$full) $missing[] = 'Nombre es obligatorio';
+if (!$idc) $missing[] = 'Cedula es obligatoria';
+if (!$email) $missing[] = 'Correo es obligatorio';
+if (!$pass) $missing[] = 'Contrasena es obligatoria';
+if ($missing) json_response(400, ['error' => implode(' | ', $missing)]);
+
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) json_response(422, ['error' => 'Correo invalido']);
+if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$/', $pass)) json_response(422, ['error' => 'Contrasena debil: minimo 8 caracteres con mayuscula, minuscula y numero']);
+
+$pdo = pdo();
+$ex = $pdo->prepare("SELECT id_card FROM users WHERE id_card=?"); $ex->execute([$idc]); if ($ex->fetch()) json_response(409, ['error' => 'Cedula ya registrada']);
+$ex2 = $pdo->prepare("SELECT email FROM users WHERE email=?"); $ex2->execute([$email]); if ($ex2->fetch()) json_response(409, ['error' => 'Correo ya registrado']);
+
 $algo = defined('PASSWORD_ARGON2ID') ? PASSWORD_ARGON2ID : PASSWORD_DEFAULT;
 $hash = password_hash($pass, $algo);
 $token = bin2hex(random_bytes(6));
-$stmt=$pdo->prepare("INSERT INTO users (full_name,id_card,email,phone,password_hash,status,verify_token) VALUES (?,?,?,?,?,'pending',?)");
-$stmt->execute([$full,$idc,$email,$phone,$hash,$token]);
+
+$stmt = $pdo->prepare("INSERT INTO users (full_name,id_card,email,phone,password_hash,status,verify_token) VALUES (?,?,?,?,?,'pending',?)");
+$stmt->execute([$full, $idc, $email, $phone, $hash, $token]);
 $body = "OTP de verificacion: {$token}\nIngresa el codigo para activar tu cuenta.";
-audit('user.register',['email'=>$email]);
-notify((int)$pdo->lastInsertId(),'Verifica tu cuenta',$body);
-json_response(201,['message'=>'Registro creado','verificationToken'=>$token]);
+
+audit('user.register', ['email' => $email]);
+notify((int)$pdo->lastInsertId(), 'Verifica tu cuenta', $body);
+json_response(201, ['message' => 'Registro creado', 'verificationToken' => $token]);
+
+
+

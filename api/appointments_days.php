@@ -1,5 +1,5 @@
-<?php
-require __DIR__.'/../util.php'; require __DIR__.'/../db.php'; check_session_timeout(); require_login_api();
+﻿<?php
+require_once __DIR__.'/../util.php'; require_once __DIR__.'/../db.php'; check_session_timeout(); require_login_api();
 $daysAhead = 21; $hours = ['09:00','09:30','10:00','10:30','11:00','11:30','14:00','14:30','15:00','15:30','16:00'];
 $today = new DateTimeImmutable('now', new DateTimeZone('America/Panama'));
 $pdo = pdo();
@@ -12,3 +12,6 @@ for ($i=0; $i<$daysAhead; $i++){
   $out[] = ['date'=>$d,'available'=>count($availableSlots)>0];
 }
 json_response(200,$out);
+
+
+

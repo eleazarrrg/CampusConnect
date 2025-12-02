@@ -1,1 +1,4 @@
-<?php require __DIR__.'/../util.php'; check_session_timeout(); if(!isset($_SESSION['csrf'])) $_SESSION['csrf']=bin2hex(random_bytes(16)); json_response(200,['token'=>$_SESSION['csrf']]); 
+﻿<?php require_once __DIR__.'/../util.php'; check_session_timeout(); if(!isset($_SESSION['csrf'])) $_SESSION['csrf']=bin2hex(random_bytes(16)); json_response(200,['token'=>$_SESSION['csrf']]); 
+
+
+

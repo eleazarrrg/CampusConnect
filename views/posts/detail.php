@@ -1,4 +1,4 @@
-<?php require __DIR__.'/../../layout_top.php'; require __DIR__.'/../../util.php'; require_login_page(); $id=(int)($_GET['id']??0); ?>
+﻿<?php require __DIR__.'/../../layout_top.php'; require_login_page(); $id=(int)($_GET['id']??0); ?>
 <div id="post"></div>
 <div class="card">
   <textarea id="comment" data-test="comment-input" placeholder="Escribe un comentario..."></textarea>
@@ -8,7 +8,9 @@
 <script>
 const API='<?= dynamic_base() ?>/api'; let csrf=''; let likes=0;
 (async()=>{csrf=(await (await fetch(`${API}/csrf.php`,{credentials:'include'})).json()).token;})();
-fetch(`${API}/post.php?id=<?= $id ?>`,{credentials:'include'}).then(r=>r.json()).then(p=>{
+fetch(`${API}/post.php?id=<?= $id ?>`,{credentials:'include'}).then(async r=>{
+  const p = await r.json();
+  if(!r.ok || !p || !p.id){ post.innerHTML='<div class="err">Publicacion no encontrada</div>'; return; }
   likes=p.likes||0;
   post.innerHTML = `<div class="card"><h2>${p.title}</h2><div class="note">${p.pub_date} - ${p.location}</div><img src="${p.image_url}" style="max-width:100%;border-radius:10px"><p>${p.body}</p><button class="btn" id="likeBtn" data-test="like-post">Me gusta (${likes})</button></div>`;
   document.getElementById('likeBtn').onclick=likePost;
@@ -31,3 +33,4 @@ async function likePost(){
 }
 </script>
 <?php require __DIR__.'/../../layout_bottom.php'; ?>
+

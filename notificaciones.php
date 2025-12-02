@@ -1,1 +1,2 @@
-<?php require __DIR__.'/views/notifications/index.php'; ?>
+﻿<?php require __DIR__.'/views/notifications/index.php'; ?>
+

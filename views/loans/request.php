@@ -1,4 +1,4 @@
-<?php require __DIR__.'/../../layout_top.php'; require __DIR__.'/../../util.php'; require_login_page(); ?>
+﻿<?php require __DIR__.'/../../layout_top.php'; require_login_page(); ?>
 <h2>Solicitar Prestamo</h2>
 <div class="grid">
   <div class="card">
@@ -15,7 +15,7 @@ function load(){
   fetch(`${API}/books.php`,{credentials:'include'}).then(r=>r.json()).then(rows=>{
     cacheBooks = rows;
     const t = ['<div class="grid">']; rows.forEach(b=>{
-      const dot = b.status==='Disponible'?'🟢':'🔴';
+      const dot = b.status==='Disponible'?'ðŸŸ¢':'ðŸ”´';
       t.push(`<div class="card" data-test="book-row"><div><strong>${b.title}</strong> - ${b.author||''} - ${dot}</div><div class="note">Disponibilidad: ${b.status}</div><div class="row"><button class="btn" data-id="${b.id}" ${b.status!=='Disponible'?'disabled':''} data-test="add-to-bag">Agregar a mochila</button><button class="btn secondary" data-view="${b.id}" data-test="view-book">Ver detalle</button></div></div>`);
     }); t.push('</div>'); table.innerHTML=t.join('');
     document.querySelectorAll('[data-test=add-to-bag]').forEach(btn=> btn.onclick=()=>addToBag(+btn.dataset.id));
@@ -30,10 +30,12 @@ function showDetail(id){
 }
 function addToBag(id){
   if(bag.length>=3){ err.textContent='Ha alcanzado el limite de 3 libros'; return; }
-  if(!bag.includes(id)) bag.push(id); bagCount.textContent=bag.length; ok.textContent='¡El libro ha sido anadido a tu mochila de libros!';
+  if(!bag.includes(id)) bag.push(id);
+  bagCount.textContent=bag.length;
+  ok.textContent='El libro ha sido anadido a tu mochila de libros!';
 }
 bagBtn.onclick=async()=>{
-  if(bag.length===0){ err.textContent='USTED NO CUENTA CON LIBROS EN LA MOCHILA'; return; }
+  if(bag.length===0){ err.textContent='No tiene libros en la mochila'; return; }
   try{
     const r=await fetch(`${API}/loans.php`,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF':csrf},credentials:'include',body:JSON.stringify({books:bag,days:7})});
     const j=await r.json(); if(!r.ok){ err.textContent=j.error||'Error'; return; }
@@ -42,3 +44,4 @@ bagBtn.onclick=async()=>{
 };
 </script>
 <?php require __DIR__.'/../../layout_bottom.php'; ?>
+

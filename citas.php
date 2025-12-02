@@ -1,1 +1,2 @@
-<?php require __DIR__.'/views/appointments/index.php'; ?>
+﻿<?php require __DIR__.'/views/appointments/index.php'; ?>
+

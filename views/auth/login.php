@@ -1,4 +1,4 @@
-<?php require __DIR__.'/../../layout_top.php'; ?>
+﻿<?php require __DIR__.'/../../layout_top.php'; ?>
 <h2>Iniciar sesion</h2>
 <div class="grid">
   <div class="card">
@@ -6,12 +6,12 @@
       <input placeholder="Correo" data-test="login-email" id="email">
       <div class="row" style="width:100%">
         <input placeholder="Contrasena" type="password" data-test="login-password" id="password" style="flex:1">
-        <button class="btn secondary" id="toggle">👁️</button>
+        <button class="btn secondary" id="toggle">Ver</button>
       </div>
       <label><input type="checkbox" id="remember"> Recordarme</label>
       <button class="btn" id="btnLogin" data-test="login">Entrar</button>
       <button class="btn secondary" id="btnResend" style="display:none" data-test="resend-verification">Reenviar verificacion</button>
-      <a href="#" id="forgot">¿Olvidaste tu contrasena?</a>
+      <a href="#" id="forgot">Olvidaste tu contrasena?</a>
     </div>
     <div class="err" id="err"></div>
     <div class="ok" id="ok"></div>
@@ -45,3 +45,4 @@ btnResend.onclick=async()=>{
 };
 </script>
 <?php require __DIR__.'/../../layout_bottom.php'; ?>
+

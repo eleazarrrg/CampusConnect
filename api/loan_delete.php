@@ -1,4 +1,4 @@
-<?php require __DIR__.'/../util.php'; require __DIR__.'/../db.php'; check_session_timeout(); ensure_csrf(); require_login_api();
+﻿<?php require_once __DIR__.'/../util.php'; require_once __DIR__.'/../db.php'; check_session_timeout(); ensure_csrf(); require_login_api();
 $in=json_decode(file_get_contents('php://input'),true)?:[]; $id=(int)($in['id']??0); $uid=current_user_id();
 if(!$id) json_response(400,['error'=>'id requerido']);
 $pdo=pdo(); $stmt=$pdo->prepare("SELECT * FROM loans WHERE id=? AND user_id=?"); $stmt->execute([$id,$uid]); $l=$stmt->fetch();
@@ -11,3 +11,6 @@ $pdo->prepare("INSERT INTO loans_history (loan_id,user_id,action,meta) VALUES (?
 $pdo->commit();
 audit('loans.delete',['loan_id'=>$id]); notify($uid,'Prestamo eliminado',"Se elimino el prestamo #$id.");
 json_response(200,['ok'=>true]);
+
+
+

@@ -1,1 +1,2 @@
-<?php require __DIR__.'/views/events/detail.php'; ?>
+﻿<?php require __DIR__.'/views/events/detail.php'; ?>
+

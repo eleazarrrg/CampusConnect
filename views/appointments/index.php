@@ -1,4 +1,4 @@
-<?php require __DIR__.'/../../layout_top.php'; require __DIR__.'/../../util.php'; require_login_page(); ?>
+﻿<?php require __DIR__.'/../../layout_top.php'; require_login_page(); ?>
 <h2>Citas</h2>
 <div class="grid">
   <div class="card">
@@ -47,13 +47,21 @@ async function renderDays(){
 
 async function onDay(date,isAvailable){
   err.textContent=''; ok.textContent=''; selectedDate=date; selectedTime=''; selectedLabel.textContent=`Fecha seleccionada: ${date}`;
-  if(!isAvailable){ noevents.style.display='block'; return; } else noevents.style.display='none';
+  if(!isAvailable){
+    popup.style.display='none';
+    noevents.textContent='Dia no disponible para agendar';
+    noevents.style.display='block';
+    return;
+  } else { noevents.style.display='none'; }
   try{
     const r=await fetch(`${API}/appointments_availability.php?date=${date}`,{credentials:'include'});
     const list = await r.json();
     if(!r.ok) { err.textContent=list.error||'Error'; return; }
     slots.innerHTML='';
-    list.forEach(it=>{ const b=document.createElement('button'); b.className='btn'; b.textContent=(it.time_label||it.time)+(it.available?'':' (ocupado)'); b.disabled=!it.available; b.onclick=()=>{selectedTime=it.time;}; b.setAttribute('data-test','time-option'); slots.appendChild(b); });
+    if(!Array.isArray(list) || list.length===0){ err.textContent='No hay horarios disponibles'; return; }
+    const anyAvailable = list.some(it=>it.available);
+    list.forEach(it=>{ const b=document.createElement('button'); b.className='btn'; b.textContent=(it.time_label||it.time)+(it.available?'':' (no disponible)'); b.disabled=!it.available; b.onclick=()=>{selectedTime=it.time;}; b.setAttribute('data-test','time-option'); slots.appendChild(b); });
+    if(!anyAvailable){ err.textContent='No hay horarios disponibles para esta fecha'; }
     popup.style.display='block';
   }catch(e){ err.textContent='Error de conexion'; }
 }
@@ -84,8 +92,9 @@ btnCancel.onclick=async()=>{
   try{
     const r=await fetch(`${API}/appointments_cancel.php`,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF':csrf},credentials:'include',body:JSON.stringify({id:activeId})});
     const j=await r.json(); if(!r.ok){ err.textContent=j.error||'Error'; return; }
-    ok.textContent='Cita cancelada'; activeId=null; popup.style.display='none'; await loadActive(); await renderDays();
+    ok.textContent=j.note || 'Cita cancelada'; activeId=null; popup.style.display='none'; await loadActive(); await renderDays();
   }catch(e){ err.textContent='Error de conexion'; }
 };
 </script>
 <?php require __DIR__.'/../../layout_bottom.php'; ?>
+

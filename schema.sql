@@ -157,14 +157,14 @@ CREATE TABLE events (
 );
 
 INSERT INTO books (title, author, published_date, description, cover_url, status) VALUES
-('Clean Code','Robert C. Martin','2008-08-01','Buenas prácticas','https://picsum.photos/seed/cc/300/180','Disponible'),
-('Design Patterns','GoF','1994-10-31','Patrones clásicos','https://picsum.photos/seed/dp/300/180','Disponible'),
-('Refactoring','Martin Fowler','1999-07-08','Técnicas de refactorización','https://picsum.photos/seed/rf/300/180','No disponible'),
+('Clean Code','Robert C. Martin','2008-08-01','Buenas practicas','https://picsum.photos/seed/cc/300/180','Disponible'),
+('Design Patterns','GoF','1994-10-31','Patrones clasicos','https://picsum.photos/seed/dp/300/180','Disponible'),
+('Refactoring','Martin Fowler','1999-07-08','Tecnicas de refactorizacion','https://picsum.photos/seed/rf/300/180','No disponible'),
 ('Domain-Driven Design','Eric Evans','2003-08-30','Modelo de dominio','https://picsum.photos/seed/ddd/300/180','Disponible'),
-('JavaScript: The Good Parts','Douglas Crockford','2008-05-01','JS clásico','https://picsum.photos/seed/jsgp/300/180','Disponible');
+('JavaScript: The Good Parts','Douglas Crockford','2008-05-01','JS clasico','https://picsum.photos/seed/jsgp/300/180','Disponible');
 
 INSERT INTO posts (title, body, image_url, pub_date, location, is_active) VALUES
-('Bienvenidos','Primera publicación de la plataforma.','https://picsum.photos/seed/cc1/600/300','2099-02-01','Campus UTP - Biblioteca',1),
+('Bienvenidos','Primera publicacion de la plataforma.','https://picsum.photos/seed/cc1/600/300','2099-02-01','Campus UTP - Biblioteca',1),
 ('Lanzamiento','Detalles del lanzamiento.','https://picsum.photos/seed/cc2/600/300','2099-02-05','Edificio A',1);
 
 INSERT INTO events (title, category, date, time, place, seats, requirements) VALUES

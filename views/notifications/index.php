@@ -1,4 +1,4 @@
-<?php require __DIR__.'/../../layout_top.php'; require __DIR__.'/../../util.php'; require_login_page(); require __DIR__.'/../../db.php'; $base=dynamic_base();
+﻿<?php require __DIR__.'/../../layout_top.php'; require_login_page(); require_once __DIR__.'/../../db.php'; $base=dynamic_base();
 $stmt=pdo()->prepare("SELECT * FROM notifications WHERE user_id=? ORDER BY id DESC"); $stmt->execute([current_user_id()]); $rows=$stmt->fetchAll(); ?>
 <h2>Notificaciones</h2>
 <div class="grid">
@@ -11,3 +11,4 @@ $stmt=pdo()->prepare("SELECT * FROM notifications WHERE user_id=? ORDER BY id DE
 <?php endforeach; ?>
 </div>
 <?php require __DIR__.'/../../layout_bottom.php'; ?>
+

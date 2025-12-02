@@ -1,4 +1,4 @@
-<?php require __DIR__.'/../../layout_top.php'; require __DIR__.'/../../util.php'; require_login_page(); ?>
+﻿<?php require __DIR__.'/../../layout_top.php'; require_login_page(); ?>
 <h2>Eventos y Programas</h2>
 <div class="row">
   <input id="q" placeholder="Buscar... (p. ej., Taller de Estudio)" data-test="search">
@@ -12,10 +12,10 @@
 <div class="toast" id="emptySearch" style="display:none">No se encontraron resultados para su busqueda</div>
 <script>
 const API='<?= dynamic_base() ?>/api'; let events=[];
-async function load(q='',cat=''){ const r=await fetch(`${API}/events.php?q=${encodeURIComponent(q)}&category=${encodeURIComponent(cat)}`,{credentials:'include'}); events=await r.json(); render(); }
-function render(){
+async function load(q='',cat='',fromSearch=false){ const r=await fetch(`${API}/events.php?q=${encodeURIComponent(q)}&category=${encodeURIComponent(cat)}`,{credentials:'include'}); events=await r.json(); render(fromSearch); }
+function render(fromSearch=false){
   list.innerHTML=''; empty.style.display='none'; emptySearch.style.display='none';
-  if(!events || events.length===0) { empty.style.display='block'; }
+  if(!events || events.length===0) { (fromSearch?emptySearch:empty).style.display='block'; return; }
   events.forEach(e=>{ const div=document.createElement('div'); div.className='card'; div.setAttribute('data-test','event-item');
     div.innerHTML=`<strong>${e.title}</strong> - ${e.category} - ${e.date} ${e.time||''} - Cupos: ${e.seats??'N/D'} - <a href='<?= dynamic_base() ?>/evento.php?id=${e.id}'>Ver detalles</a>`; list.appendChild(div); });
   cal.innerHTML=''; const future=[...Array(21)].map((_,i)=>{const d=new Date(); d.setDate(d.getDate()+i); return d;});
@@ -26,10 +26,10 @@ function render(){
   });
 }
 document.getElementById('apply').onclick=async()=>{
-  await load(q.value,cat.value);
-  if (events.length===0) { document.getElementById('emptySearch').style.display='block'; }
+  await load(q.value,cat.value,true);
 };
 load();
 setInterval(()=>load(q.value,cat.value),10000); // refresco para cupos en tiempo real
 </script>
 <?php require __DIR__.'/../../layout_bottom.php'; ?>
+
